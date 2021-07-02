@@ -191,8 +191,10 @@ export function load(load: \`${c.gqlPathFragment}\`): T${c.gqlHash}.__GraphQLLet
   if (hasLiteral || hasLoad) {
     writeFileSync(
       gqlDtsMacroFullPath,
-      (hasLiteral ? `export { gql } from ".";\n` : '') +
-        (hasLoad ? `export { load } from ".";\n` : ''),
+      `declare module "graphql-let/macro" {\n` +
+        (hasLiteral ? `  export { gql } from ".";\n` : '') +
+        (hasLoad ? `  export { load } from ".";\n` : '') +
+        `}\n`,
     );
   }
 }
