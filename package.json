@@ -144,9 +144,13 @@
     "graphql": "*",
     "typescript": "*"
   },
-  "optionalDependencies": {
-    "@graphql-codegen/typescript-resolvers": "*",
-    "babel-jest": "*"
+  "peerDependenciesMeta": {
+    "@graphql-codegen/typescript-resolvers": {
+      "optional": true
+    },
+    "babel-jest": {
+      "optional": true
+    }
   },
   "husky": {
     "hooks": {
