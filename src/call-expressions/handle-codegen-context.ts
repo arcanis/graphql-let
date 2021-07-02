@@ -148,7 +148,7 @@ export function writeTiIndexForContext(
 
   let hasLiteral = false;
   let hasLoad = false;
-  let dtsEntrypointContent = '';
+  let dtsEntrypointContent = 'export function gql(gql: string): unknown;\n';
   for (const c of codegenContext) {
     switch (c.type) {
       case 'document-import':
