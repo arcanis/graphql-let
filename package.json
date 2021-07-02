@@ -190,6 +190,7 @@
     "clean": "rimraf dist",
     "test": "jest",
     "build": "yarn clean && yarn compile",
-    "prepublishOnly": "yarn lint && yarn typecheck && yarn build && yarn test"
+    "prepack": "yarn build",
+    "prepublishOnly": "yarn lint && yarn typecheck && yarn test"
   }
 }
