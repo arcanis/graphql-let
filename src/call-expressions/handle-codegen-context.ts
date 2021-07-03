@@ -148,7 +148,8 @@ export function writeTiIndexForContext(
 
   let hasLiteral = false;
   let hasLoad = false;
-  let dtsEntrypointContent = 'export function gql(gql: string): unknown;\n';
+  let dtsEntrypointContent =
+    'declare module "graphql-let" {\n  export function gql(gql: string): unknown;\n';
   for (const c of codegenContext) {
     switch (c.type) {
       case 'document-import':
@@ -163,9 +164,8 @@ export function writeTiIndexForContext(
             basename(c.dtsRelPath, '.d.ts'),
           ),
         );
-        dtsEntrypointContent += `import T${c.gqlHash} from './${dtsRelPathWithoutExtension}';
-export function gql(gql: \`${c.gqlContent}\`): T${c.gqlHash}.__GraphQLLetTypeInjection;
-`;
+        const source = c.gqlContent.replace(/\n/g, '\\n');
+        dtsEntrypointContent += `  export function gql(gql: \`${source}\`): (typeof import('./${dtsRelPathWithoutExtension}'))['__GraphQLLetTypeInjection'];\n`;
         hasLiteral = true;
         break;
       }
@@ -179,26 +179,26 @@ export function gql(gql: \`${c.gqlContent}\`): T${c.gqlHash}.__GraphQLLetTypeInj
             basename(c.dtsRelPath, '.d.ts'),
           ),
         );
-        dtsEntrypointContent += `import T${c.gqlHash} from './${dtsRelPathWithoutExtension}';
-export function load(load: \`${c.gqlPathFragment}\`): T${c.gqlHash}.__GraphQLLetTypeInjection;
-`;
+        const source = c.gqlPathFragment.replace(/\n/g, `\\n`);
+        dtsEntrypointContent += `  export function load(load: \`${source}\`): (typeof import('./${dtsRelPathWithoutExtension}'))['__GraphQLLetTypeInjection'];\n`;
         hasLoad = true;
         break;
       }
     }
   }
+  dtsEntrypointContent += '}\n';
   writeFileSync(typeInjectEntrypointFullPath, dtsEntrypointContent);
   if (hasLiteral || hasLoad) {
     writeFileSync(
       gqlDtsMacroFullPath,
-      `declare module "graphql-let/macro" {\n` +
+      'declare module "graphql-let/macro" {\n' +
         (hasLiteral
           ? `  const gql: (typeof import("."))["gql"];\n  export { gql };\n`
           : '') +
         (hasLoad
           ? `  const load: (typeof import("."))["load"];\n  export { load };\n`
           : '') +
-        `}\n`,
+        '}\n',
     );
   }
 }
