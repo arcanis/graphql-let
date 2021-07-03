@@ -36,7 +36,7 @@ const VALID_IMPORT_NAMES = new Set<string>([
 
 export const parserOption: ParserOptions = {
   sourceType: 'module',
-  plugins: ['typescript', 'jsx'],
+  plugins: ['typescript', 'jsx', 'topLevelAwait'],
 };
 
 export function getPathsFromState(state: PluginPass) {
